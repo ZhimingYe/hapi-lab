@@ -83,6 +83,11 @@ See `src/configuration.ts` for all options.
 - `HAPI_EXTRA_HEADERS_JSON` - JSON object of extra headers to send on CLI → hub requests, e.g. `{"Cookie":"CF_Authorization=..."}`.
 - `HAPI_CLAUDE_PATH` - Path to a specific `claude` executable.
 - `HAPI_HTTP_MCP_URL` - Default MCP target for `hapi mcp`.
+- `HAPI_AGENT_PROXY_MODE` - Agent proxy strategy: `inherit` (default), `isolated` (ignore parent proxy env first), or `off` (disable proxy for launched agent processes).
+- `HAPI_AGENT_HTTP_PROXY` - Proxy used only by launched agent processes (`HTTP_PROXY`/`http_proxy`).
+- `HAPI_AGENT_HTTPS_PROXY` - Proxy used only by launched agent processes (`HTTPS_PROXY`/`https_proxy`).
+- `HAPI_AGENT_ALL_PROXY` - Proxy used only by launched agent processes (`ALL_PROXY`/`all_proxy`), e.g. `socks5://127.0.0.1:7897`.
+- `HAPI_AGENT_NO_PROXY` - No-proxy hosts used only by launched agent processes (`NO_PROXY`/`no_proxy`).
 
 ### Runner
 

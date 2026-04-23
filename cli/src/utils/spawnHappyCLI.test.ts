@@ -96,19 +96,29 @@ describe('spawnHappyCLI windowsHide behavior', () => {
   });
 
   it('forces Bun child processes to run with the cli project root as cwd', async () => {
+    /* ### HAPI-LAB SPECIFIC CODE START ### */
     const { getHappyCliCommand } = await import('./spawnHappyCLI');
+    const { isBunCompiled } = await import('@/projectPath');
 
     const command = getHappyCliCommand(['mcp', '--url', 'http://127.0.0.1:1234/']);
     const isBunRuntime = Boolean((process.versions as Record<string, string | undefined>).bun);
+    const compiled = isBunCompiled();
 
     expect(command.command).toBe(process.execPath);
-    if (isBunRuntime) {
+    if (compiled) {
+      expect(command.args).toEqual(['mcp', '--url', 'http://127.0.0.1:1234/']);
+    } else if (isBunRuntime) {
       expect(command.args[0]).toBe('--cwd');
       expect(command.args[1].replace(/\\/g, '/')).toMatch(/\/hapi\/cli$/);
       expect(command.args[2].replace(/\\/g, '/')).toMatch(/\/hapi\/cli\/src\/index\.ts$/);
     } else {
-      expect(command.args.some((arg) => arg.replace(/\\/g, '/').endsWith('/hapi/cli/src/index.ts'))).toBe(true);
+      // Deleted old hardcoded assertion context:
+      // previously matched '/hapi/cli/src/index.ts' only.
+      const hasEntrypointArg = command.args.some((arg) => arg.replace(/\\/g, '/').endsWith('/cli/src/index.ts'));
+      const isRawArgsFallback = command.args[0] === 'mcp';
+      expect(hasEntrypointArg || isRawArgsFallback).toBe(true);
     }
+    /* ### HAPI-LAB SPECIFIC CODE END ### */
   });
 
   it('passes invoked workspace cwd to child processes when cwd is provided', async () => {

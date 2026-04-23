@@ -24,6 +24,9 @@ import {
 } from './types'
 import { getDefaultClaudeCodePath, logDebug, streamToStdin } from './utils'
 import { withBunRuntimeEnv } from '@/utils/bunRuntime'
+/* ### HAPI-LAB SPECIFIC CODE START ### */
+import { buildAgentProxyEnv } from '@/utils/agentProxyEnv'
+/* ### HAPI-LAB SPECIFIC CODE END ### */
 import { killProcessByChildProcess } from '@/utils/process'
 import { stripNewlinesForWindowsShellArg } from '@/utils/shellEscape'
 import type { Writable } from 'node:stream'
@@ -378,7 +381,9 @@ export function query(config: {
     cleanupMcpConfig = appendMcpConfigArg(spawnArgs, mcpServers)
 
     // Spawn Claude Code process
-    const spawnEnv = withBunRuntimeEnv(process.env, { allowBunBeBun: false })
+    /* ### HAPI-LAB SPECIFIC CODE START ### */
+    const spawnEnv = withBunRuntimeEnv(buildAgentProxyEnv(process.env), { allowBunBeBun: false })
+    /* ### HAPI-LAB SPECIFIC CODE END ### */
     logDebug(`Spawning Claude Code process: ${spawnCommand} ${spawnArgs.join(' ')}`)
 
     const child = spawn(spawnCommand, spawnArgs, {

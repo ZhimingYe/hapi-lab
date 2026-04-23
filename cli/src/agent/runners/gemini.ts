@@ -1,9 +1,15 @@
 import { AgentRegistry } from '@/agent/AgentRegistry';
 import { AcpSdkBackend } from '@/agent/backends/acp';
+/* ### HAPI-LAB SPECIFIC CODE START ### */
+import { buildAgentProxyEnv } from '@/utils/agentProxyEnv';
+/* ### HAPI-LAB SPECIFIC CODE END ### */
 
 function buildEnv(): Record<string, string> {
-    return Object.keys(process.env).reduce((acc, key) => {
-        const value = process.env[key];
+    /* ### HAPI-LAB SPECIFIC CODE START ### */
+    const agentEnv = buildAgentProxyEnv(process.env);
+    /* ### HAPI-LAB SPECIFIC CODE END ### */
+    return Object.keys(agentEnv).reduce((acc, key) => {
+        const value = agentEnv[key];
         if (typeof value === 'string') {
             acc[key] = value;
         }

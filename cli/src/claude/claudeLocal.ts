@@ -9,6 +9,9 @@ import { spawnWithTerminalGuard } from "@/utils/spawnWithTerminalGuard";
 import { getHapiBlobsDir } from "@/constants/uploadPaths";
 import { stripNewlinesForWindowsShellArg } from "@/utils/shellEscape";
 import { getDefaultClaudeCodePath } from "./sdk/utils";
+/* ### HAPI-LAB SPECIFIC CODE START ### */
+import { buildAgentProxyEnv } from "@/utils/agentProxyEnv";
+/* ### HAPI-LAB SPECIFIC CODE END ### */
 
 export async function claudeLocal(opts: {
     abort: AbortSignal,
@@ -87,7 +90,10 @@ export async function claudeLocal(opts: {
         ...cleanEnv,
         DISABLE_AUTOUPDATER: '1',
         ...opts.claudeEnvVars
-    }
+    };
+    /* ### HAPI-LAB SPECIFIC CODE START ### */
+    const agentEnv = buildAgentProxyEnv(env);
+    /* ### HAPI-LAB SPECIFIC CODE END ### */
 
     logger.debug(`[ClaudeLocal] Spawning claude with args: ${JSON.stringify(args)}`);
 
@@ -101,7 +107,7 @@ export async function claudeLocal(opts: {
             command: claudeCommand,
             args,
             cwd: opts.path,
-            env: withBunRuntimeEnv(env, { allowBunBeBun: false }),
+            env: withBunRuntimeEnv(agentEnv, { allowBunBeBun: false }),
             signal: opts.abort,
             logLabel: 'ClaudeLocal',
             spawnName: 'claude',

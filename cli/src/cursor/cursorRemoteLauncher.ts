@@ -3,6 +3,9 @@ import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { logger } from '@/ui/logger';
 import { killProcessByChildProcess } from '@/utils/process';
+/* ### HAPI-LAB SPECIFIC CODE START ### */
+import { buildAgentProxyEnv } from '@/utils/agentProxyEnv';
+/* ### HAPI-LAB SPECIFIC CODE END ### */
 import { convertAgentMessage } from '@/agent/messageConverter';
 import { OpencodeDisplay } from '@/ui/ink/OpencodeDisplay';
 import {
@@ -172,7 +175,9 @@ class CursorRemoteLauncher extends RemoteLauncherBase {
         return new Promise((resolve, reject) => {
             const child = spawn('agent', args, {
                 cwd,
-                env: process.env,
+                /* ### HAPI-LAB SPECIFIC CODE START ### */
+                env: buildAgentProxyEnv(process.env),
+                /* ### HAPI-LAB SPECIFIC CODE END ### */
                 stdio: ['ignore', 'pipe', 'pipe'],
                 shell: process.platform === 'win32'
             });
