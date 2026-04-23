@@ -1,5 +1,8 @@
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { logger } from '@/ui/logger';
+/* ### HAPI-LAB SPECIFIC CODE START ### */
+import { buildAgentProxyEnv } from '@/utils/agentProxyEnv';
+/* ### HAPI-LAB SPECIFIC CODE END ### */
 import { killProcessByChildProcess } from '@/utils/process';
 import type {
     InitializeParams,
@@ -73,9 +76,12 @@ export class CodexAppServerClient {
             return;
         }
 
+        /* ### HAPI-LAB SPECIFIC CODE START ### */
+        const agentEnv = buildAgentProxyEnv(process.env);
+        /* ### HAPI-LAB SPECIFIC CODE END ### */
         this.process = spawn('codex', ['app-server'], {
-            env: Object.keys(process.env).reduce((acc, key) => {
-                const value = process.env[key];
+            env: Object.keys(agentEnv).reduce((acc, key) => {
+                const value = agentEnv[key];
                 if (typeof value === 'string') acc[key] = value;
                 return acc;
             }, {} as Record<string, string>),

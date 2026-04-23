@@ -1,5 +1,8 @@
 import { logger } from '@/ui/logger';
 import { spawnWithTerminalGuard } from '@/utils/spawnWithTerminalGuard';
+/* ### HAPI-LAB SPECIFIC CODE START ### */
+import { buildAgentProxyEnv } from '@/utils/agentProxyEnv';
+/* ### HAPI-LAB SPECIFIC CODE END ### */
 
 /**
  * Filter out 'resume' subcommand which is managed internally by hapi.
@@ -64,7 +67,9 @@ export async function cursorLocal(opts: {
         command: 'agent',
         args,
         cwd: opts.path,
-        env: process.env,
+        /* ### HAPI-LAB SPECIFIC CODE START ### */
+        env: buildAgentProxyEnv(process.env),
+        /* ### HAPI-LAB SPECIFIC CODE END ### */
         signal: opts.abort,
         logLabel: 'CursorLocal',
         spawnName: 'agent',

@@ -1,5 +1,8 @@
 import { logger } from '@/ui/logger';
 import { spawnWithTerminalGuard } from '@/utils/spawnWithTerminalGuard';
+/* ### HAPI-LAB SPECIFIC CODE START ### */
+import { buildAgentProxyEnv } from '@/utils/agentProxyEnv';
+/* ### HAPI-LAB SPECIFIC CODE END ### */
 import { buildMcpServerConfigArgs, buildDeveloperInstructionsArg } from './utils/codexMcpConfig';
 import { codexSystemPrompt } from './utils/systemPrompt';
 import type { ReasoningEffort } from './appServerTypes';
@@ -77,7 +80,9 @@ export async function codexLocal(opts: {
         command: 'codex',
         args,
         cwd: opts.path,
-        env: process.env,
+        /* ### HAPI-LAB SPECIFIC CODE START ### */
+        env: buildAgentProxyEnv(process.env),
+        /* ### HAPI-LAB SPECIFIC CODE END ### */
         signal: opts.abort,
         logLabel: 'CodexLocal',
         spawnName: 'codex',
