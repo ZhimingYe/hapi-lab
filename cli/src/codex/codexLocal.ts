@@ -3,7 +3,11 @@ import { spawnWithTerminalGuard } from '@/utils/spawnWithTerminalGuard';
 /* ### HAPI-LAB SPECIFIC CODE START ### */
 import { buildAgentProxyEnv } from '@/utils/agentProxyEnv';
 /* ### HAPI-LAB SPECIFIC CODE END ### */
-import { buildMcpServerConfigArgs, buildDeveloperInstructionsArg } from './utils/codexMcpConfig';
+import {
+    buildMcpServerConfigArgs,
+    buildDeveloperInstructionsArg,
+    buildSessionStartHookConfigArgs
+} from './utils/codexMcpConfig';
 import { codexSystemPrompt } from './utils/systemPrompt';
 import type { ReasoningEffort } from './appServerTypes';
 
@@ -36,6 +40,10 @@ export async function codexLocal(opts: {
     onSessionFound: (id: string) => void;
     codexArgs?: string[];
     mcpServers?: Record<string, { command: string; args: string[] }>;
+    sessionHook?: {
+        port: number;
+        token: string;
+    };
 }): Promise<void> {
     const args: string[] = [];
 
@@ -59,6 +67,10 @@ export async function codexLocal(opts: {
     // Add MCP server configuration
     if (opts.mcpServers && Object.keys(opts.mcpServers).length > 0) {
         args.push(...buildMcpServerConfigArgs(opts.mcpServers));
+    }
+
+    if (opts.sessionHook) {
+        args.push(...buildSessionStartHookConfigArgs(opts.sessionHook.port, opts.sessionHook.token));
     }
 
     // Add developer instructions (system prompt)
